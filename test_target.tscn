@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://dw7kosesgey8t"]
+
+[ext_resource type="Script" path="res://Scripts/TestTarget.gd" id="1_cvyw4"]
+[ext_resource type="Texture2D" uid="uid://60naaf7p38r4" path="res://Art/crosshair025.png" id="2_4svvb"]
+
+[node name="TestTarget" type="CharacterBody2D"]
+position = Vector2(24, 22)
+script = ExtResource("1_cvyw4")
+
+[node name="Target" type="Sprite2D" parent="."]
+position = Vector2(-5.36442e-07, 5.06639e-07)
+scale = Vector2(0.321429, 0.339286)
+texture = ExtResource("2_4svvb")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+enabled = false
+zoom = Vector2(5, 5)
