@@ -31,24 +31,41 @@ func _physics_process(delta):
 		movement_state = movement.IDLE
 		return
 	#Else, moves the sprite towards the player.
-	player.global_position = player.global_position.move_toward(global_position,0.4)
-		
+	if movement_state == movement.MOVING:
+		player.global_position = player.global_position.move_toward(global_position,0.4)
+
 	
 func _input(event):
 	#Handles player input if the movement state is "Choosing"
-	if movement_state == movement.IDLE:
-		if event.is_action_pressed("Confirm"):
+	if event.is_action_pressed("Confirm"):
+		if movement_state == movement.IDLE:
 			movement_state = movement.CHOOSING
 			print("Choosing where to move")
+		elif movement_state == movement.CHOOSING:
+			move_player()
+		else:
+			return
 	if movement_state == movement.CHOOSING:
 		if event.is_action_pressed("Left"):
-			move(Vector2.LEFT)
+			if check_distance() == true:
+				move(Vector2.LEFT)
+			elif check_distance() == false:
+				print("You can only move 1 tile at a time")
 		elif event.is_action_pressed("Right"):
-			move(Vector2.RIGHT)
+			if check_distance() == true:
+				move(Vector2.RIGHT)
+			elif check_distance() == false:
+				print("You can only move 1 tile at a time")
 		elif event.is_action_pressed("Up"):
-			move(Vector2.UP)
+			if check_distance() == true:
+				move(Vector2.UP)
+			elif check_distance() == false:
+				print("You can only move 1 tile at a time")
 		elif event.is_action_pressed("Down"):
-			move(Vector2.DOWN)
+			if check_distance() == true:
+				move(Vector2.DOWN)
+			elif check_distance() == false:
+				print("You can only move 1 tile at a time")
 	else:
 		return
 
@@ -59,9 +76,26 @@ func move(direction: Vector2):
 		current_tile.x + direction.x,
 		current_tile.y + direction.y)
 	var player_tile: Vector2i = rooms.local_to_map(player.global_position)
-	prints("Current tile is:", current_tile, "target tile is", target_tile, "player tile is:", player_tile)
-	movement_state = movement.MOVING
+	prints("Current tile is:", current_tile, "target tile is", target_tile)
 	global_position = rooms.map_to_local(target_tile)
 
+func move_player():
+	movement_state = movement.MOVING
+	print("Target tile chosen")
+	
+func check_distance():
+	var distance = global_position.distance_to(player.global_position)
+	if distance <= 1:
+		print("Distance to player:", distance)
+		return true
+	else:
+		global_position = player.global_position
+		return false
+#Making them different nodes worked.
+#Yay! We made it mode only one tile AND figured out how to make it go back to the player by myself!
 
-#TRY MAKING THE TARGET AND THE PLAYER DIFFERENT NODES! IF IT DOESN'T WORK, I DON'T KNOW, I'LL KILL MYSELF.
+#TODO 
+# Optional. Make so instead of moving left or right it moves to the left or to the right of the player. Trust me
+# Make it so a message pops up asking if you want to confirm the movement, and if you cancel the target goes back to the player
+# Optional. Make it so the message is added to the scene tree by code instead of show/hide
+# Modify the code in V0.4 with this simplifications.
