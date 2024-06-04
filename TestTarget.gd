@@ -32,6 +32,9 @@ var movement_state = movement.IDLE
 #Coordinate variable used for custom data
 var coordinate_name
 
+#Signal for moving to a new room. Used for room assignment.
+signal moving_to_a_new_room
+
 #Called when the node is ready
 func _ready():
 	pop_up.connect("confirm", _on_confirm)
@@ -47,7 +50,9 @@ func _physics_process(delta):
 		return
 	#Else, moves the sprite towards the player.
 	if movement_state == movement.MOVING:
-		player.global_position = player.global_position.move_toward(global_position,0.4)
+		moving_to_a_new_room.emit()
+		player.global_position = player.global_position.move_toward(global_position,1)
+		
 
 	
 func _input(event):
@@ -97,7 +102,6 @@ func move(direction: Vector2):
 	#Tile coordinate and data getters
 	get_coordinate_plus(Global.target_tile)
 	get_room_type(Global.target_tile)
-	prints( "target tile is", Global.target_tile, "Custom data is:", Global.coordinate_name, "Room type is:", Global.room_type)
 	
 	#Updates and points target position
 	player_ray_cast_2d.target_position = direction * 16
@@ -112,12 +116,10 @@ func move(direction: Vector2):
 
 func move_player():
 	movement_state = movement.MOVING
-	print("Target tile chosen")
 	
 func check_distance():
 	var distance = global_position.distance_to(player.global_position)
 	if distance <= 1:
-		print("Distance to player:", distance)
 		return true
 	else:
 		global_position = player.global_position
@@ -134,7 +136,6 @@ func _on_confirm(answer):
 		move_player()
 		test_floor.remove_child(pop_up)
 	else:
-		print("Answer is NO")
 		global_position = player.global_position
 		test_floor.remove_child(pop_up)
 		movement_state = movement.CHOOSING
@@ -171,24 +172,23 @@ func get_room_type(target_tile: Vector2):
 		return null
 
 	Global.room_type = Global.tile_data.get_custom_data("Type")
-	print(Global.tile_data.get_custom_data("Empty?"))
 	return Global.room_type
 
-
-
+func _on_moving_to_a_new_room():
+	if Global.tile_data.get_custom_data("Empty?") == true:
+		Global.room_type = Global.room_randomizer()
+		print(Global.room_type)
+		Global.tile_data.set_custom_data("Type", Global.room_type)
+		Global.tile_data.set_custom_data("Empty?", false)
+		print(Global.tile_data.get_custom_data("Type"))
+	else:
+		print("Room type already set: ", Global.tile_data.get_custom_data("Type"))
 
 #TODO 
-#Remind my girlfriend I love her/ Recordarle a mi novia que la amo
-# To check if a player has been inside a room before we are going to make a 
-# "Rooms entered" array. It will start empty, but everytime a player goes into a room for the first time
-# We will add tile to the array, no...wait. I have a better idea. Custom data. boolean. We are using a custom data layer named "Empty?" with a boolean that checks if the room is empty.
-# If the room is empty the "type" label will display "???" and a custom data string for "Type" will be randomly chosen when THE PLAYER sprite, not the player node, enters the room and then, change "empty" to false.
-# If "empty is false" then it will display it's type in the type label.
-# Check if we can randomly choose the custom data of a tile for the "type of room"
-# Instead of making every room a 0 type room until the player walks in for the first time
-#Make it so every room custom data of the type of room is null until the player walks in, when it will be randomly chosen.
-# If all of that is possible, apply the old effect of entering a "room" to this new system.
-# If all of the above works, make it so "entering a room" is when the player enters the room, not the target.
+#Remind my girlfriend I love her/ Recordarle a mi novia que la amo!
+# Create a Room type manager
+# Create a placeholder function for managing Room Type events
+# Create a placeholder function for each room type
 # If ALL of that works, THEN we start working on the turn system.
-# MEGAOPTIONAL, LIKE, SUPEROPTIONAL: Modify the code in V0.4 with this simplifications. Because, it may be easier to develope the scenes in this version than edit the code in V.04
+#We will re-develope everything from version V 0.4 on this Version V 0.5. V 0.04 is dead. All hail V 0.5.
 
