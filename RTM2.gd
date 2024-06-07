@@ -27,7 +27,31 @@ const ROOM_TYPES = {
 func _on_test_target_player_entered_room(tile_data):
 	var coordinate = tile_data.get_custom_data("Coordinate")
 	var room_type = tile_data.get_custom_data("Type")
-	if tile_data:
+	if room_type == "Quartz":
+    room_randomizer()
+  trigger_room_event()
+else:
+  trigger_room_event()
+
+#Randomly chooses a room using the weights from the CONS
+func room_randomizer() -> String:
+    var total_weight = 0
+    for room_type in ROOM_TYPES:
+        total_weight += ROOM_TYPES[room_type]["weight"]
+
+    var random_value = randi() % total_weight
+    var current_weight = 0
+
+    for room_type in ROOM_TYPES:
+        current_weight += ROOM_TYPES[room_type]["weight"]
+        if random_value < current_weight:
+            return room_type  # Return the selected room type
+
+    # This should not happen if weights are set up correctly
+    return "Quartz"  # Default to Quartz if something goes wrong 
+
+
+func trigger_room_event():
 		print("Moved to a new room")
 		print("New room coordinate is:", coordinate)
 		print("New room type is:", room_type)
