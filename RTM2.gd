@@ -29,9 +29,9 @@ func _on_test_target_player_entered_room(tile_data):
 	var room_type = tile_data.get_custom_data("Type")
 	if room_type == "Quartz":
     room_randomizer()
-  trigger_room_event()
+  trigger_room_event(tile_data)
 else:
-  trigger_room_event()
+  trigger_room_event(tile_data)
 
 #Randomly chooses a room using the weights from the CONS
 func room_randomizer() -> String:
@@ -50,14 +50,67 @@ func room_randomizer() -> String:
     # This should not happen if weights are set up correctly
     return "Quartz"  # Default to Quartz if something goes wrong 
 
+#Triggers the corresponding room event.
+func trigger_room_event(tile_data: TileData):
+    var room_type = tile_data.get_custom_data("Type")
+    var coordinate = tile_data.get_custom_data("Coordinate")
 
-func trigger_room_event():
-		print("Moved to a new room")
-		print("New room coordinate is:", coordinate)
-		print("New room type is:", room_type)
+    print("Moved to a new room")
+    print("New room coordinate is:", coordinate)
+    print("New room type is:", room_type)
+
+    # Use a match statement to call the appropriate handler function
+    match room_type:
+        "Copper":
+            handle_copper_room_event(tile_data)
+        "Bronze":
+            handle_bronze_room_event(tile_data)
+        "Silver":
+            handle_silver_room_event(tile_data)
+        "Iron":
+            handle_iron_room_event(tile_data)
+        "Gold":
+            handle_gold_room_event(tile_data)
+        "Emerald":
+            handle_emerald_room_event(tile_data)
+        "Amethyst":
+            handle_amethyst_room_event(tile_data)
+        "Rhinestone":
+            handle_rhinestone_room_event(tile_data)
+        "Quartz":
+            pass  # Do nothing for empty rooms (Quartz)
+        _:  # Default case (optional)
+            print("Unrecognized room type:", room_type)  # Handle unexpected types
 
 
+#Room Events handlers 
+func handle_copper_room_event(tile_data):
+    pass
 
+func handle_bronze_room_event(tile_data):
+    pass
+
+func handle_silver_room_event(tile_data):
+    pass
+
+func handle_iron_room_event(tile_data):
+    pass
+
+func handle_gold_room_event(tile_data):
+    pass
+
+func handle_emerald_room_event(tile_data):
+    pass
+
+func handle_amethyst_room_event(tile_data):
+    pass
+
+
+func handle_rhinestone_room_event(tile_data):
+    pass
+
+func handle_quartz_room_event(tile_data):
+    pass
 
 
 ###TODO###
